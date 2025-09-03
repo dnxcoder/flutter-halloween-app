@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:halloween_app/views/pages/home/home.dart';
 import 'package:halloween_app/views/pages/home/home_components/animations_play.dart';
 import 'package:halloween_app/views/pages/home/home_components/body.dart';
+import 'package:flutter/rendering.dart'; // <-- aqui que está o debugPaintSizeEnabled
 
 void main() {
+  debugPaintSizeEnabled = false;
   runApp(const MyApp());
 }
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:halloween_app/views/pages/home/home_components/circle.dart';
+import 'package:halloween_app/views/pages/home/home_components/spook_bottom_nav_bar.dart';
 
 class Body extends StatefulWidget {
   const Body({super.key});
@@ -51,35 +53,35 @@ class _Body extends State<Body> with TickerProviderStateMixin {
       ),
       Item(
         name: "Pumpkin\nKing",
-        price: 209.99,
+        price: 130.99,
         width: WIDTH,
         imageSrc: "ghorst.png",
         index: 1,
       ),
       Item(
-        name: "La Muerta",
-        price: 209.99,
+        name: "La\nMuerta",
+        price: 180.99,
         width: WIDTH,
         imageSrc: "corpsebridge.png",
         index: 2,
       ),
       Item(
         name: "Skeleton\nGirl",
-        price: 209.99,
+        price: 199.99,
         width: WIDTH,
         imageSrc: "skeleton-girl2.png",
         index: 3,
       ),
       Item(
         name: "Burger\nBandit",
-        price: 209.99,
+        price: 220.99,
         width: WIDTH,
         imageSrc: "hamburger-man2.png",
         index: 4,
       ),
       Item(
         name: "Dragon Girl",
-        price: 209.99,
+        price: 240.99,
         width: WIDTH,
         imageSrc: "child-dragon2.png",
         index: 5,
@@ -91,69 +93,88 @@ class _Body extends State<Body> with TickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         leading: Icon(Icons.cancel_outlined, size: 40),
-        title: Text("HALLOWEEN"),
+        title: Text("HALLOWEEN", style: GoogleFonts.creepster(fontSize: 42)),
         actions: [
-          Padding(
-            padding: EdgeInsetsGeometry.directional(end: 4),
-            child: Icon(Icons.abc, size: 40),
-          ),
+          // Padding(
+          //   padding: EdgeInsetsGeometry.directional(end: 4),
+          //   child: Icon(Icons.abc, size: 40),
+          // ),
         ],
       ),
-      body: Column(
-        children: [
-          Stack(
-            children: [
-              Positioned(
-                bottom: BODYHEIGHT * 0.7 * 0.05,
-                right: -40,
-                child: Circle(
-                  controller: _circleController,
-                  currentIndex: _currentIndex,
-                  decorationImageController: _decorationImageController,
+      body: GestureDetector(
+        onHorizontalDragEnd: (details) {
+          if (details.primaryVelocity! < 0) {
+            // Swipe para a esquerda
+            moveCarouselFoward(_controllCarrousel, _circleController, WIDTH);
+          } else if (details.primaryVelocity! > 0) {
+            // Swipe para a direita
+            moveCarouselBackwards(_controllCarrousel, _circleController, WIDTH);
+          }
+        },
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                Positioned(
+                  bottom: BODYHEIGHT * 0.7 * 0.05,
+                  right: -40,
+                  child: Circle(
+                    controller: _circleController,
+                    currentIndex: _currentIndex,
+                    decorationImageController: _decorationImageController,
+                  ),
                 ),
-              ),
-              Container(
-                height: BODYHEIGHT * 0.7,
-                decoration: BoxDecoration(
-                  //border: Border.all(color: Colors.purple, width: 4),
+                Container(
+                  height: BODYHEIGHT * 0.7,
+                  decoration: BoxDecoration(
+                    //border: Border.all(color: Colors.purple, width: 4),
+                  ),
+                  child: Row(children: myList)
+                      .animate(
+                        onInit: (c) => _controllCarrousel = c,
+                        autoPlay: false,
+                      )
+                      .moveX(
+                        duration: Duration(milliseconds: 2000),
+                        begin: _fromScrollDx,
+                        end: _toScrollDx,
+                        curve: Curves.elasticInOut,
+                      ),
                 ),
-                child: Row(children: myList)
-                    .animate(
-                      onInit: (c) => _controllCarrousel = c,
-                      autoPlay: false,
-                    )
-                    .moveX(
-                      duration: Duration(milliseconds: 2000),
-                      begin: _fromScrollDx,
-                      end: _toScrollDx,
-                      curve: Curves.elasticInOut,
-                    ),
-              ),
-            ],
-          ),
-          ElevatedButton(
-            onPressed: () => moveCarouselFoward(
-              _controllCarrousel,
-              _circleController,
-              WIDTH,
+              ],
             ),
-            child: Text("ALOU"),
-          ),
-        ],
+          ],
+        ),
       ),
+      bottomNavigationBar: SpookyBottomNavBar(currentIndex: 2, onTap: () => {}),
     );
   }
 
   void moveCarouselFoward(
     AnimationController carrouselController,
     AnimationController circleController,
-
     double offsetX,
   ) {
     setState(() {
       _fromScrollDx = _toScrollDx;
       _toScrollDx -= offsetX;
       _currentIndex += 1;
+    });
+
+    carrouselController.forward(from: 0);
+    _decorationImageController.forward(from: 0);
+    circleController.toggle();
+  }
+
+  void moveCarouselBackwards(
+    AnimationController carrouselController,
+    AnimationController circleController,
+    double offsetX,
+  ) {
+    setState(() {
+      _fromScrollDx = _toScrollDx;
+      _toScrollDx += offsetX;
+      _currentIndex -= 1;
     });
 
     carrouselController.forward(from: 0);
@@ -197,11 +218,17 @@ class Item extends StatelessWidget {
             children: [
               Text(
                 name,
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                style: GoogleFonts.hennyPenny(
+                  fontSize: 42,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               Text(
-                "\$200.99",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                "\ $price",
+                style: GoogleFonts.emilysCandy(
+                  fontSize: 33,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               ElevatedButton(
                 onPressed: () => {},
@@ -220,18 +247,24 @@ class Item extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Transform.translate(
-          offset: Offset(20, -200),
+          offset: Offset(20, -170),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 name,
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                style: GoogleFonts.hennyPenny(
+                  fontSize: 42,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               Text(
-                "\$ 200.99",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                "\$ $price",
+                style: GoogleFonts.emilysCandy(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               ElevatedButton(
                 onPressed: () => {},

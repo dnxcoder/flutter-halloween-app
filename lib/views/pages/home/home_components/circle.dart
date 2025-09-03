@@ -24,10 +24,10 @@ class _Circle extends State<Circle> {
   final List<String> listOfImages = [
     "castle2.png",
     "pumpkin2.png",
-    "lamuerta4.png",
-    "skeleton7.png",
+    "skeleton20.png",
+    "skeleton30.png",
     "hamb3.png",
-    "dragon2.png",
+    "dragon6.png",
   ];
 
   String selectedImageSrc = "castle.png";
@@ -40,7 +40,7 @@ class _Circle extends State<Circle> {
     int currentIndex = widget.currentIndex;
 
     final down = 1000.ms;
-    final up = 1500.ms;
+    final up = 1000.ms;
 
     // TODO: implement build
     return ClipOval(
